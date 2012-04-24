@@ -106,8 +106,19 @@ sub _make_filter {
 	#warn "v = $v";
 	#my $v = $k ? $input->{ $k } : undef;
 
-	if ( $v and my $cond  = $f->{cond} ) {
-	    if ( my $condition = $cond->{ $v } ) {
+        if ( $v and my $cond = $f->{cond} ) {
+            my $condition;
+
+            if ( ref $cond eq 'CODE' ) {
+#                warn "v = $v";
+                $condition = $cond->( $v );
+#                warn "condition = ". Dumper $condition;
+            }
+            else {
+                $condition = $cond->{ $v };
+            }
+
+            if ( ref $condition ~~ [ qw { ARRAY HASH } ] ) {
 		$self->_make_filter(
 		    _arrize( $condition ),
 		);
@@ -153,7 +164,8 @@ sub _merge {
     my $where = $fields->{ where };
     my $self_where = $self->{ where };
 
-    #warn Dumper $where;
+#    warn Dumper $where;
+#    warn Dumper $self_where;
 
     if ( $where ) {
 	# CLONE IT!
@@ -236,7 +248,7 @@ sub _set_input {
 #===============================================================================
 sub select {
     my $self = shift;
-    my @rest = @_;
+    my %params = @_;
 
     warn 'select '. Dumper $self if DEBUG;
 
@@ -245,22 +257,52 @@ sub select {
 	limit_dialect => 'LimitXY',
     );
 
-    if ( @rest > 1 ) {
-	return $n->select( 
-	    $self->{ table },
-	    $self->{ field },
-	    $self->{ where  },
-	    @rest,
-	);
+    my @result;
+
+    if ( $params{limit} && @{$params{limit}} == 2 ) {
+        @result = $n->select( 
+            $self->{ table },
+            $self->{ field },
+            $self->{ where },
+            $params{order_by},
+            $params{limit}
+        );
     }
     else {
-	return $n->SQL::Abstract::select( 
-	    $self->{ table },
-	    $self->{ field },
-	    $self->{ where  },
-	    @rest,
-	);
+        @result = $n->SQL::Abstract::select( 
+            $self->{ table },
+            $self->{ field },
+            $self->{ where },
+            $params{order_by},
+        );
     }
+
+    if ( $params{select_options} && @{$params{select_options}} ) {
+        my $opts = uc join ' ', @{$params{select_options}};
+        $result[0] =~ s/(SELECT)/$1 $opts/;
+    }
+
+    if ( $params{group_by} && @{$params{group_by}} ) {
+        my $clause = "GROUP BY " . join ', ', @{$params{group_by}};
+        if ($params{order_by}) {
+            $result[0] =~ s/(ORDER)/$clause $1/;
+        }
+        else {
+            $result[0] .= " " . $clause;
+        }
+    }
+
+    if ( $params{having} && @{$params{having}} ) {
+        my $clause = "HAVING " . join ' AND ', @{$params{having}};
+        if ($params{order_by}) {
+            $result[0] =~ s/(ORDER)/$clause $1/;
+        }
+        else {
+            $result[0] .= " " . $clause;
+        }
+    }
+
+    return wantarray ? @result : $result[0];
 }
 
 sub tables {
@@ -322,7 +364,6 @@ sub _table  {
 	ARRAYREFREF  => sub {join ', ', @{ $$from };},
     });
 }
-
 
 1;
 
@@ -493,4 +534,3 @@ the GNU General Public License, or the Artistic License, copies of
 which should have accompanied your Perl kit.
 
 =cut
-
