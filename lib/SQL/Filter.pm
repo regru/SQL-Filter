@@ -10,7 +10,7 @@
 #        NOTES:  ---
 #       AUTHOR:  Pavel Boldin (), <davinchi@cpan.org>
 #      COMPANY:  
-#      VERSION:  1.0
+#      VERSION:  0.015
 #      CREATED:  02.08.2009 03:12:46 MSD
 #     REVISION:  ---
 #===============================================================================
@@ -31,6 +31,8 @@ use base 'Data::Visitor';
 
 use constant DEBUG => not not our $DEBUG || $ENV{SQL_FILTER_DEBUG};
 #use constant DEBUG => 1;
+
+our $VERSION = 0.015;
 
 $Data::Dumper::Indent = 1;
 
