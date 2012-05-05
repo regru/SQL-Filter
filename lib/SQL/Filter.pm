@@ -261,7 +261,7 @@ sub select {
 
     my @result;
 
-    if ( $params{limit} && @{$params{limit}} == 2 ) {
+    if ( $params{limit} && @{$params{limit}} > 0 ) {
         @result = $n->select( 
             $self->{ table },
             $self->{ field },
