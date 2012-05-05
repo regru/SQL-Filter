@@ -267,7 +267,7 @@ sub select {
             $self->{ field },
             $self->{ where },
             $params{order_by},
-            $params{limit}
+            @{$params{limit}}
         );
     }
     else {
