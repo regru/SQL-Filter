@@ -284,20 +284,40 @@ sub select {
         $result[0] =~ s/(SELECT)/$1 $opts/;
     }
 
-    if ( $params{group_by} && @{$params{group_by}} ) {
-        my $clause = "GROUP BY " . join ', ', @{$params{group_by}};
+    if ( $params{group_by} ) {
+        my $clause = "GROUP BY ";
+        if ( ref $params{group_by} eq 'ARRAY') {
+            $clause .= join ', ', @{$params{group_by}};
+        }
+        elsif ( not ref $params{group_by} ) {
+            $clause .= $params{group_by};
+        }
+
         if ($params{order_by}) {
             $result[0] =~ s/(ORDER)/$clause $1/;
+        }
+        elsif ($params{limit}) {
+            $result[0] =~ s/(LIMIT)/$clause $1/;
         }
         else {
             $result[0] .= " " . $clause;
         }
     }
 
-    if ( $params{having} && @{$params{having}} ) {
-        my $clause = "HAVING " . join ' AND ', @{$params{having}};
+    if ( $params{having} ) {
+        my $clause = "HAVING ";
+        if ( ref $params{having} eq 'ARRAY') {
+            $clause .= join ' AND ', @{$params{having}};
+        }
+        elsif ( not ref $params{having} ) {
+            $clause .= $params{having};
+        }
+
         if ($params{order_by}) {
             $result[0] =~ s/(ORDER)/$clause $1/;
+        }
+        elsif ($params{limit}) {
+            $result[0] =~ s/(LIMIT)/$clause $1/;
         }
         else {
             $result[0] .= " " . $clause;
