@@ -8,3 +8,4 @@ t/01-filter.t
 t/02-synopsis-example.t
 t/03-clonebug.t
 README
+Changes
