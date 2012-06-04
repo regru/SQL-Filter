@@ -294,10 +294,10 @@ sub select {
         }
 
         if ($params{order_by}) {
-            $result[0] =~ s/(ORDER)/$clause $1/;
+            $result[0] =~ s/(ORDER BY(?!(\r|\n|.)*ORDER BY))/$clause $1/;
         }
         elsif ($params{limit}) {
-            $result[0] =~ s/(LIMIT)/$clause $1/;
+            $result[0] =~ s/(LIMIT(?!(\r|\n|.)*LIMIT))/$clause $1/;
         }
         else {
             $result[0] .= " " . $clause;
@@ -314,10 +314,10 @@ sub select {
         }
 
         if ($params{order_by}) {
-            $result[0] =~ s/(ORDER)/$clause $1/;
+            $result[0] =~ s/(ORDER BY(?!(\r|\n|.)*ORDER BY))/$clause $1/;
         }
         elsif ($params{limit}) {
-            $result[0] =~ s/(LIMIT)/$clause $1/;
+            $result[0] =~ s/(LIMIT(?!(\r|\n|.)*LIMIT))/$clause $1/;
         }
         else {
             $result[0] .= " " . $clause;
