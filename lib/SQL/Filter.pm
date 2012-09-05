@@ -43,23 +43,23 @@ sub new {
     my %param = @_;
 
     ref $param{filter} eq 'ARRAY'
-	or  die "filter should be arrayref";
+        or  die "filter should be arrayref";
 
     ref $param{input} eq 'HASH'
-	or  die "input should be hash";
+        or  die "input should be hash";
 
     $param{field} = [ $param{field} ] unless ref $param{field};
     $param{table} = [ $param{table} ] unless ref $param{table};
 
     ref $param{field} eq 'ARRAY'
-	or die "field should be scalar or array";
+        or die "field should be scalar or array";
 
     ref $param{table} eq 'ARRAY'
-	or die "table should be scalar or array";
+        or die "table should be scalar or array";
 
     my $self = {
-	where => [],
-	%param,
+        where => [],
+        %param,
     };
 
     bless $self, $class;
@@ -98,15 +98,15 @@ sub _make_filter {
 
     foreach my $f ( @$filter ) {
 
-	$self->_merge( $f );
+        $self->_merge( $f );
 
-	my $k = $f->{field};
-	#warn "k = $k";
-	next unless $k;
+        my $k = $f->{field};
+        #warn "k = $k";
+        next unless $k;
 
-	my $v = $input->{ $k };
-	#warn "v = $v";
-	#my $v = $k ? $input->{ $k } : undef;
+        my $v = $input->{ $k };
+        #warn "v = $v";
+        #my $v = $k ? $input->{ $k } : undef;
 
         if ( $v and my $cond = $f->{cond} ) {
             my $condition;
@@ -121,28 +121,28 @@ sub _make_filter {
             }
 
             if ( ref $condition ~~ [ qw { ARRAY HASH } ] ) {
-		$self->_make_filter(
-		    _arrize( $condition ),
-		);
-		next;
-	    }
-	}
+                $self->_make_filter(
+                    _arrize( $condition ),
+                );
+                next;
+            }
+        }
 
-	#next unless defined $v;
+        #next unless defined $v;
 
-	my $fname = $v ? 'on_true' : 'on_false';
+        my $fname = $v ? 'on_true' : 'on_false';
 
-	warn "$fname ", Dumper $input if DEBUG;
+        warn "$fname ", Dumper $input if DEBUG;
 
-	if ( my $filter = $f->{ $fname } ) {
-	    #warn 'on_true/on_false ', Dumper $filter;
-	    $self->_make_filter(
-		_arrize( $filter ),
-	    );
-	}
+        if ( my $filter = $f->{ $fname } ) {
+            #warn 'on_true/on_false ', Dumper $filter;
+            $self->_make_filter(
+                _arrize( $filter ),
+            );
+        }
 
-	#$output->merge( $f->{on_true }, $input ) if  $v && $f->{on_true };
-	#$output->merge( $f->{on_false}, $input ) if !$v && $f->{on_false};
+        #$output->merge( $f->{on_true }, $input ) if  $v && $f->{on_true };
+        #$output->merge( $f->{on_false}, $input ) if !$v && $f->{on_false};
     }
 
     $self->_set_input();
@@ -170,24 +170,24 @@ sub _merge {
 #    warn Dumper $self_where;
 
     if ( $where ) {
-	# CLONE IT!
-	$where = clone( $where );
+        # CLONE IT!
+        $where = clone( $where );
 
-	if ( ref $where eq 'HASH' ) {
-	    $where = [ -nest => $where ];
-	}
-	elsif ( ref $where ne 'ARRAY' ) {
-	    $where = [ $where ];
-	}
+        if ( ref $where eq 'HASH' ) {
+            $where = [ -nest => $where ];
+        }
+        elsif ( ref $where ne 'ARRAY' ) {
+            $where = [ $where ];
+        }
 
-	foreach my $field ( @$where ) {
-	    if ( ref $field eq 'CODE' ) {
-		$field->( $self );
-		next;
-	    }
-	    warn Dumper $field if DEBUG;
-	    push @$self_where, $field;
-	}
+        foreach my $field ( @$where ) {
+            if ( ref $field eq 'CODE' ) {
+                $field->( $self );
+                next;
+            }
+            warn Dumper $field if DEBUG;
+            push @$self_where, $field;
+        }
     }
 
     push @{ $self->{ $_ } }, @{ $fields->{ $_.'s' } || [] } for qw/table field/;
@@ -199,10 +199,10 @@ sub _merge {
 sub visit_value {
     $_[1] =~ s/\$([\w_]+)/$_[0]->{input}{ $1 }/gxe if $_[1];
     if ( DEBUG && $1 ) {
-	warn "Substitute $1 with ".$_[0]->{input}{ $1 };
+        warn "Substitute $1 with ".$_[0]->{input}{ $1 };
     }
     if ( $1 && ref $_[0]->{input}{ $1 } ) {
-	$_[1] = $_[0]->{input}{ $1 };
+        $_[1] = $_[0]->{input}{ $1 };
     }
     $_[1];
 }
@@ -213,10 +213,10 @@ sub visit_hash_value {
     my $input = $self->{input};
 
     if ( $k eq '-like' ) {
-	$v =~ s/\$([\w_]+)/$input->{ $1 }/gxe;
-	$_[1] = $v =~ tr/%*_?/%%__/ ? $v : q{%}.$v.q{%};
+        $v =~ s/\$([\w_]+)/$input->{ $1 }/gxe;
+        $_[1] = $v =~ tr/%*_?/%%__/ ? $v : q{%}.$v.q{%};
 
-	return;
+        return;
     }
 
     #warn "key is $k";
@@ -255,8 +255,8 @@ sub select {
     warn 'select '. Dumper $self if DEBUG;
 
     my $n = SQL::Abstract::My->new(
-	logic	      => 'and',
-	limit_dialect => 'LimitXY',
+        logic	      => 'and',
+        limit_dialect => 'LimitXY',
     );
 
     my @result;
@@ -341,13 +341,13 @@ sub where {
     my @rest = @_;
 
     my ($stmt, @bind) = 
-	SQL::Abstract::My->new(
-	    logic => 'and',
-	    limit_dialect => 'LimitXY',
-	)->where( 
-	    $self->{ where },
-	    @rest,
-	);
+        SQL::Abstract::My->new(
+            logic => 'and',
+            limit_dialect => 'LimitXY',
+        )->where( 
+            $self->{ where },
+            @rest,
+        );
 
     $stmt =~ s/^\s*WHERE//;
 
@@ -358,7 +358,7 @@ sub where {
 #  SQL::Abstract::My contains my code for JOINs
 #---------------------------------------------------------------------------
 package # hide from PAUSE
-	SQL::Abstract::My;
+        SQL::Abstract::My;
 
 use SQL::Abstract::Limit;
 use base 'SQL::Abstract::Limit';
@@ -367,23 +367,23 @@ sub _table  {
     my $self = shift;
     my $from = shift;
     $self->_SWITCH_refkind($from, {
-	ARRAYREF     => sub {
-	    my $o = join ', ', map { $self->_quote( $_ ) } grep { ref $_ ne 'ARRAY' } @$from;
-	    $o .= ' ' . join ' ', map {
-		if ( $_->[0] =~ /JOIN/i ) {
-		    $_->[0]
-		}
-		else {
-		    my $j = $self->_sqlcase('LEFT JOIN ') . $_->[0];     
-		    @$_ == 1	? $self->_sqlcase('NATURAL ') . $j
-				: $j . $self->_sqlcase(' ON ') .  $_->[1];
-		}
-	    } grep { ref $_ eq 'ARRAY' } @$from;
-	    $o;
-	},
-	SCALAR       => sub {$self->_quote($from)},
-	SCALARREF    => sub {$$from},
-	ARRAYREFREF  => sub {join ', ', @{ $$from };},
+        ARRAYREF     => sub {
+            my $o = join ', ', map { $self->_quote( $_ ) } grep { ref $_ ne 'ARRAY' } @$from;
+            $o .= ' ' . join ' ', map {
+                if ( $_->[0] =~ /JOIN/i ) {
+                    $_->[0]
+                }
+                else {
+                    my $j = $self->_sqlcase('LEFT JOIN ') . $_->[0];     
+                    @$_ == 1	? $self->_sqlcase('NATURAL ') . $j
+                                : $j . $self->_sqlcase(' ON ') .  $_->[1];
+                }
+            } grep { ref $_ eq 'ARRAY' } @$from;
+            $o;
+        },
+        SCALAR       => sub {$self->_quote($from)},
+        SCALARREF    => sub {$$from},
+        ARRAYREFREF  => sub {join ', ', @{ $$from };},
     });
 }
 

@@ -10,29 +10,29 @@ my $filter = SQL::Filter->new(
     table => 'testme t',
     field => '*',
     filter => [ # or subclass and return them from get_filter method
-	{
-	    tables  => [ [ 'another_test a' ] ], # natural join that
-	    field  => 'field',
-	    on_true => {
-		where => {
-		    'a.field' => { -like => '$field' },
-		},
-	    },
-	},
-	{
-	    field => 'another_field',
-	    cond   => {
-		first_value => {
-		    where => {
-			'a.first_column' => { -not_like => 'first_value' },
-		    },
-		},
-	    },
-	},
+        {
+            tables  => [ [ 'another_test a' ] ], # natural join that
+            field  => 'field',
+            on_true => {
+                where => {
+                    'a.field' => { -like => '$field' },
+                },
+            },
+        },
+        {
+            field => 'another_field',
+            cond   => {
+                first_value => {
+                    where => {
+                        'a.first_column' => { -not_like => 'first_value' },
+                    },
+                },
+            },
+        },
     ],
     input => {
-	field => 'value',
-	another_field => 'first_value',
+        field => 'value',
+        another_field => 'first_value',
     },
 );
 

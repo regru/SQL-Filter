@@ -31,10 +31,10 @@ use_ok('SQL::Filter');
 
 foreach my $test (@$tests) {
     my $filter = SQL::Filter->new(
-	table => 'testme',
-	field => '*',
-	input => $test->{input},
-	filter => $test->{filter}
+        table => 'testme',
+        field => '*',
+        input => $test->{input},
+        filter => $test->{filter}
     );
 
     is_deeply( [ $filter->select ], $test->{sql}, $test->{name} );

@@ -28,12 +28,12 @@ use_ok( $m );
 
 my $filter = [
     {
-	field	=> 'test',
-	on_true => {
-	    where => {
-		name => '$testme',
-	    },
-	},
+        field	=> 'test',
+        on_true => {
+            where => {
+                name => '$testme',
+            },
+        },
     }
 ];
 
