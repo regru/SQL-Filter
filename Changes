@@ -1,2 +1,5 @@
+0.16 2013-11-29 Alexander Ruzhnikov
+    Compatibility with perl-5.18(smartmatch)
+
 0.15 2012-05-17	Roman Yusufhanov
 	Some fixes

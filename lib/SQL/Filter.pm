@@ -32,7 +32,9 @@ use base 'Data::Visitor';
 use constant DEBUG => not not our $DEBUG || $ENV{SQL_FILTER_DEBUG};
 #use constant DEBUG => 1;
 
-our $VERSION = 0.015;
+no if $] >= 5.017011, warnings => "experimental::smartmatch";
+
+our $VERSION = 0.016;
 
 $Data::Dumper::Indent = 1;
 
